@@ -1,0 +1,94 @@
+version: '3'
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./wp-content/themes:/var/www/html/wp-content/themes:cached
+      - ./wp-content/plugins:/var/www/html/wp-content/plugins:cached
+      - ./assets/uploads:/var/www/html/wp-content/uploads:cached
+      - ./wp-content/install.php:/var/www/html/wp-content/install.php:cached
+      - ./ops/utils/mailhog.php:/var/www/html/wp-content/mu-plugins/mailhog.php:cached
+      - ./ops/utils/ngrok.php:/var/www/html/wp-content/mu-plugins/ngrok.php:cached
+      - ./ops/livereload/livereload-listener.php:/var/www/html/wp-content/mu-plugins/livereload-listener.php:cached
+      - ./vendor:/var/www/vendor
+      - wp:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_TABLE_PREFIX: "wp_"
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: "
+      \ndefine('ABSOLUTE_HOST', $$_SERVER['HTTP_X_ORIGINAL_HOST'] ?? $$_SERVER['HTTP_HOST']);
+      \ndefine('WP_SITEURL', 'http://' . ABSOLUTE_HOST );
+      \ndefine('WP_HOME', 'http://' . ABSOLUTE_HOST );
+      \ndefine( 'DISALLOW_FILE_EDIT', true );
+      \ndefine('DISALLOW_FILE_MODS', true );
+      \ndefine( 'AUTOMATIC_UPDATER_DISABLED', true );
+      \ndefine( 'WP_AUTO_UPDATE_CORE', false );
+      \n// define( 'WP_DEFAULT_THEME', 'theme-slug' );
+      \ndefine( 'S3_UPLOADS_BUCKET', 'my-bucket' );
+      \ndefine( 'S3_UPLOADS_USE_LOCAL', true );
+      \nrequire '/var/www/vendor/autoload.php';
+      "
+
+  wpcli:
+    image: wordpress:cli
+    volumes:
+      - wp:/var/www/html
+      - ./wp-content/plugins:/var/www/html/wp-content/plugins:cached
+      - ./wp-content/themes:/var/www/html/wp-content/themes:cached
+      - ./vendor:/var/www/vendor
+    entrypoint: wp  
+    command: "--info"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: database
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+      MYSQL_USERNAME: wordpress
+      MYSQL_ROOT_PASSWORD: root
+
+  database:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+    ports:
+      - 3306:3306
+    volumes:
+      - wp-db:/var/lib/mysql:delegated
+
+  mailhog:
+    image: mailhog/mailhog
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
+
+  livereload:
+    build: ./ops/livereload
+    ports:
+      - 35729:35729
+    volumes:
+      - ./wp-content:/livereload
+
+  docsify:
+    build: ./docs
+    ports:
+      - 3000:3000
+      - 35730:35730 # Docsify Livereload
+    volumes:
+      - ./docs:/docsify
+volumes:
+  wp: ~
+  wp-db: ~

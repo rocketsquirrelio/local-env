@@ -1,0 +1,23 @@
+{
+    "name": "local-env",
+    "version": "0.1.0",
+    "repository": "git@github.com:rocketsquirrelio/local-env.git",
+    "author": "Cody Ogden <cody@codyogden.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@masonite/wp-project-version-sync": "^1.1.0",
+        "concurrently": "^5.1.0",
+        "docsify-cli": "^4.4.0",
+        "node-sass": "^4.13.1",
+        "sass": "^1.26.2"
+    },
+    "scripts": {
+        "docs": "open http://localhost:3000",
+        "postversion": "npm run version:plugin && npm run version:theme",
+        "tunnel": "ngrok http 80",
+        "version:plugin": "wp-update-project-version -s package.json-p -p wp-content/themes/wp-env/style.css",
+        "version:theme": "wp-update-project-version -s package.json -p wp-content/plugins/wp-env/wp-env.php",
+        "wp:enter": "docker-compose -f docker-compose.local.yml exec wordpress /bin/bash",
+        "wp": "docker-compose -f docker-compose.local.yml run --rm wpcli"
+    }
+}

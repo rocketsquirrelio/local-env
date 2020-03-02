@@ -1,0 +1,25 @@
+# MacOS
+.DS_Store
+
+# Composer
+/vendor/
+
+# Database Backups / Exports
+/ops/backups/*
+!/ops/backups/.gitkeep
+
+# Uploads
+/assets/backups
+/assets/uploads/*
+!/assets/uploads/.gitkeep
+
+# Plugins
+/wp-content/plugins/*
+!/wp-content/plugins/index.php
+
+# Themes
+/wp-content/themes/*
+!/wp-content/themes/index.php
+
+# Node
+node_modules/

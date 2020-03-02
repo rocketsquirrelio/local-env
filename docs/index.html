@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WordPress Project</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="vendor/style.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'WordPress Environment',
+      loadSidebar: true,
+      subMaxLevel: 3,
+      loadNavbar: true,
+      logo: '/_media/wordpress.svg',
+      themeColor: '#1F8DD6',
+      alias: {
+        '/.*/_sidebar.md': '/_sidebar.md',
+        '/.*/_navbar.md': '/_navbar.md',
+        '/.*/wp-content/(.*)': 'http://localhost:3000/wp-content/$1'
+      },
+      noEmoji: true,
+      plugins: [
+        function(hook) {
+          hook.afterEach(function (content, next) {
+            var newContent = content.replace(/(?:<p>)\.([a-z]+)&gt; /g, function (match) {
+              return '<p class="' + match.match(/\.([a-z]+)/g).join().split('.')[1] + '">';
+            });
+            next(newContent);
+          });
+        }
+      ]  
+    }
+  </script>
+  <script src="vendor/docsify.js"></script>
+  <script src="vendor/prism/css-extras.js"></script>
+  <script src="vendor/prism/css.js"></script>
+  <script src="vendor/prism/erb.js"></script>
+  <script src="vendor/prism/ruby.js"></script>
+  <script src="vendor/prism/javascript.js"></script>
+  <script src="vendor/prism/json.js"></script>
+  <script src="vendor/prism/php-extras.js"></script>
+  <script src="vendor/prism/php.js"></script>
+  <script src="vendor/prism/sass.js"></script>
+  <script src="vendor/prism/scss.js"></script>
+  <script src="vendor/prism/bash.js"></script>
+  <script src="vendor/prism/yaml.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+$font-mono: 'Operator Mono', 'Roboto Mono', Monaco, courier, monospace;
+$font-system: -apple-system,BlinkMacSystemFont,"Segoe UI",'Source Sans Pro',Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+
+@import 'vue';
+@import 'prism-tomorrow';
+
+// Fix Logo
+.app-name-link img {
+  height: 50px;
+  width: 50px;
+  display: block;
+  margin: 0 auto 0 15px;
+}
+
+// Alter Code Sections
+.markdown-section code {
+  font-family: $font-mono;
+  color: #24292e;
+}
+.markdown-section code[class^="lang-"],
+.markdown-section pre[data-lang],
+.markdown-section pre > code[class^="lang-"] {
+  color: #ccc;
+  background-color: #393939;
+  font-family: $font-mono;
+  font-size: 0.95em;
+}
+pre:after{
+  font-family: $font-mono;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Adjust Sidebar
+.sidebar {
+  padding-top: 15px;
+}
+
+%p {
+  padding: 1.2em;
+  margin: 0 !important;
+  box-sizing: border-box;
+}
+
+$types: (
+  "warning": (
+    "background-color": rgba(255,111,105, 0.05),
+    "color": #ff6f69
+  ),
+  "notice": (
+    "background-color": rgba(255,238,173, 0.3),
+    "color": #997a37
+  ),
+  "success": (
+    "background-color": rgba(150,206,180, 0.2),
+    "color": #5a7b6c
+  ),
+  "info": (
+    "background-color": rgba(31, 141, 214, 0.12),
+    "color": #1b7ec0
+  )
+);
+
+@each $class, $details in $types {
+  .#{$class} {
+    @extend %p;
+    background-color: map-get($details, 'background-color');
+    @at-root {
+      &,
+      & * {
+        color: map-get( $details, 'color' ) !important;
+      }
+    }
+  }
+}
